@@ -1,4 +1,6 @@
-// =============================================================================
-// Gamification Feature Types — Placeholder
-// =============================================================================
-// Will be populated in Phase 3G with streak, XP, badge, achievement, and leaderboard types.
+export interface StreakSummary {
+  current_streak: number;
+  longest_streak: number;
+  total_active_days: number;
+  last_active_date: string | null;
+}

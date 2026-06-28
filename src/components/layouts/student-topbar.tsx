@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ROUTES } from "@/constants/routes";
+import { useAuthStore } from "@/stores/auth.store";
+import { getUserInitials } from "@/lib/user-display";
 
 // =============================================================================
 // Student Top Bar
@@ -15,6 +17,9 @@ interface StudentTopBarProps {
 }
 
 export function StudentTopBar({ className }: StudentTopBarProps) {
+  const user = useAuthStore((state) => state.user);
+  const initials = getUserInitials(user);
+
   return (
     <header
       className={cn(
@@ -38,7 +43,7 @@ export function StudentTopBar({ className }: StudentTopBarProps) {
         <Button variant="ghost" size="icon" className="rounded-full" render={<Link href={ROUTES.PROFILE} />}>
           <Avatar className="h-8 w-8">
             <AvatarFallback className="text-xs font-semibold bg-primary/10 text-primary">
-              MA
+              {initials}
             </AvatarFallback>
           </Avatar>
           <span className="sr-only">Profile</span>

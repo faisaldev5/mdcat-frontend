@@ -1,71 +1,46 @@
 "use client";
 
-import { useAuthStore } from "@/stores/auth.store";
-import { Button } from "@/components/ui/button";
-import { authService } from "@/services/auth.service";
-import { useRouter } from "next/navigation";
-import { toast } from "@/components/shared/toaster";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
 import { DashboardLayout } from "@/components/layouts/dashboard-layout";
-
-import { deleteRefreshTokenCookie } from "@/lib/auth-cookies";
+import { DashboardHero } from "@/features/dashboard/components/dashboard-hero";
+import { DashboardStats } from "@/features/dashboard/components/dashboard-stats";
+import { ContinueLearningCard } from "@/features/dashboard/components/continue-learning-card";
+import { DashboardProgress } from "@/features/dashboard/components/dashboard-progress";
+import { StudyPlanCard } from "@/features/dashboard/components/study-plan-card";
 
 export default function DashboardPage() {
-  const { user, clearAuth } = useAuthStore();
-  const router = useRouter();
+  // Prevent Next.js hydration mismatch
+  const [isMounted, setIsMounted] = useState(false);
 
-  const handleLogout = async () => {
-    try {
-      await authService.logout();
-    } catch (error) {
-      console.error("Logout failed on server, proceeding with local logout", error);
-    } finally {
-      // Clear cookie and store regardless of server response
-      deleteRefreshTokenCookie();
-      clearAuth();
-      
-      toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
-        variant: "default",
-      });
-      
-      router.push("/login");
-    }
-  };
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <DashboardLayout>
+        <div className="flex w-full flex-col space-y-6">
+          <div className="h-20 animate-pulse rounded-lg bg-muted" />
+          <div className="h-64 animate-pulse rounded-lg bg-muted" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
-      <div className="flex w-full max-w-4xl flex-col space-y-6">
-        <div>
-          <h1 className="font-heading text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="mt-2 text-muted-foreground">
-            Welcome back to your MDCAT preparation platform.
-          </p>
+      <div className="flex w-full flex-col gap-6 max-w-6xl mx-auto pb-10">
+        <DashboardHero />
+        
+        <DashboardStats />
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <ContinueLearningCard />
+          <DashboardProgress />
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Authentication Status</CardTitle>
-            <CardDescription>
-              Minimal temporary dashboard to verify successful login.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="rounded-lg bg-muted p-4">
-              <p className="text-sm font-medium">Logged in as:</p>
-              <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-                <p><strong className="text-foreground">Name:</strong> {user?.display_name || "Unknown"}</p>
-                <p><strong className="text-foreground">Email:</strong> {user?.email || "Unknown"}</p>
-                <p><strong className="text-foreground">Role:</strong> {user?.role || "Unknown"}</p>
-              </div>
-            </div>
-            
-            <Button variant="destructive" onClick={handleLogout}>
-              Logout
-            </Button>
-          </CardContent>
-        </Card>
+        
+        <StudyPlanCard />
       </div>
     </DashboardLayout>
   );

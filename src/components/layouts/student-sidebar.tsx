@@ -7,6 +7,8 @@ import { Logo } from "@/components/shared/logo";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
+import { useAuthStore } from "@/stores/auth.store";
+import { getUserDisplayName, getUserInitials } from "@/lib/user-display";
 
 // =============================================================================
 // Student Sidebar — Matches Stitch dashboard sidebar design
@@ -29,6 +31,9 @@ interface StudentSidebarProps {
 
 export function StudentSidebar({ collapsed, className }: StudentSidebarProps) {
   const pathname = usePathname();
+  const user = useAuthStore((state) => state.user);
+  const displayName = getUserDisplayName(user);
+  const initials = getUserInitials(user);
 
   return (
     <aside
@@ -54,13 +59,13 @@ export function StudentSidebar({ collapsed, className }: StudentSidebarProps) {
         >
           <Avatar className="h-9 w-9 shrink-0">
             <AvatarFallback className="text-xs font-semibold bg-primary/10 text-primary">
-              MA
+              {initials}
             </AvatarFallback>
           </Avatar>
           {!collapsed && (
             <div className="min-w-0">
               <p className="text-sm font-semibold text-sidebar-foreground truncate">
-                Medical Aspirant
+                {displayName}
               </p>
               <p className="text-xs text-muted-foreground truncate">
                 Pre-Medical Track

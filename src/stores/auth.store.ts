@@ -32,18 +32,22 @@ const initialState: AuthState = {
 export const useAuthStore = create<AuthState & AuthActions>()((set) => ({
   ...initialState,
 
-  setAuth: (accessToken, user) =>
+  setAuth: (accessToken, user) => {
     set({
       accessToken,
       user,
       isAuthenticated: true,
-    }),
+    });
+  },
 
-  updateToken: (accessToken) =>
+  updateToken: (accessToken) => {
     set({
       accessToken,
       isAuthenticated: true,
-    }),
+    });
+  },
 
-  clearAuth: () => set(initialState),
+  clearAuth: () => {
+    set(initialState);
+  },
 }));

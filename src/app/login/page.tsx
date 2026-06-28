@@ -23,6 +23,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+import { Info } from "lucide-react";
 import { setRefreshTokenCookie } from "@/lib/auth-cookies";
 
 function LoginForm() {
@@ -43,10 +44,8 @@ function LoginForm() {
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
-    console.log("LOGIN REQUEST BODY:", data);
     try {
       const response = await authService.login(data);
-      console.log("LOGIN API RESPONSE:", response);
       
       // Store refresh token in cookie for middleware
       setRefreshTokenCookie(response.refresh_token);
@@ -64,7 +63,6 @@ function LoginForm() {
       router.push(redirectTo);
     } catch (error: unknown) {
       const apiError = error as { message?: string };
-      console.log("LOGIN ERROR CAUGHT:", error);
       toast({
         title: "Login failed",
         description: apiError?.message || "Invalid credentials. Please try again.",
@@ -75,8 +73,23 @@ function LoginForm() {
     }
   };
 
+  const redirectMessage = searchParams.get("message");
+
   return (
-    <Card className="shadow-lg">
+    <div className="space-y-6">
+      {redirectMessage === "login_required" && (
+        <div className="flex items-start gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20 text-primary">
+          <Info className="h-5 w-5 mt-0.5 shrink-0" />
+          <div>
+            <h3 className="font-medium">Authentication Required</h3>
+            <p className="text-sm mt-1 opacity-90">
+              Please log in or create an account to start the quiz.
+            </p>
+          </div>
+        </div>
+      )}
+      
+      <Card className="shadow-lg">
       <CardContent className="pt-6">
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
@@ -144,7 +157,8 @@ function LoginForm() {
           </Button>
         </form>
       </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 }
 

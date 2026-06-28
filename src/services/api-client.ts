@@ -34,7 +34,11 @@ apiClient.interceptors.request.use(
     const { accessToken } = useAuthStore.getState();
 
     if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+      if (config.headers && typeof config.headers.set === 'function') {
+        config.headers.set('Authorization', `Bearer ${accessToken}`);
+      } else {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
     }
 
     return config;
@@ -99,7 +103,11 @@ apiClient.interceptors.response.use(
       return new Promise<string>((resolve, reject) => {
         failedQueue.push({ resolve, reject });
       }).then((token) => {
-        originalRequest.headers.Authorization = `Bearer ${token}`;
+        if (originalRequest.headers && typeof originalRequest.headers.set === 'function') {
+          originalRequest.headers.set('Authorization', `Bearer ${token}`);
+        } else {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+        }
         return apiClient(originalRequest);
       });
     }
@@ -130,7 +138,12 @@ apiClient.interceptors.response.use(
       processQueue(null, access_token);
 
       // Retry the original request
-      originalRequest.headers.Authorization = `Bearer ${access_token}`;
+      if (originalRequest.headers && typeof originalRequest.headers.set === 'function') {
+        originalRequest.headers.set('Authorization', `Bearer ${access_token}`);
+      } else {
+        originalRequest.headers.Authorization = `Bearer ${access_token}`;
+      }
+
       return apiClient(originalRequest);
     } catch (refreshError) {
       // Refresh failed — clear auth and redirect to login
@@ -219,3 +232,30 @@ export async function apiPost<T>(
 }
 
 export default apiClient;
+
+// =============================================================================
+// Public API Client (no auth interceptors)
+// =============================================================================
+// A separate Axios instance for public endpoints (subjects, chapters,
+// collections) that do NOT require authentication.
+//
+// Why this exists:
+// The hosting provider's CDN/WAF (nginx on Hostinger) inspects the
+// Authorization header on all incoming requests. When the header contains
+// a token the CDN considers invalid, it returns a 400 Bad Request HTML
+// page before the request ever reaches WordPress. This causes intermittent
+// failures when an authenticated user navigates to public content pages
+// (e.g. Q-Bank), because the main apiClient's request interceptor
+// automatically attaches the Bearer token to every request.
+//
+// By using a clean Axios instance without auth interceptors for public
+// endpoints, we avoid triggering the CDN's token inspection entirely.
+
+export const publicApiClient = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+  timeout: 30000,
+});

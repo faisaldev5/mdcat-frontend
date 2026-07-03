@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
 import { useAuthStore } from "@/stores/auth.store";
 import { getUserDisplayName, getUserInitials } from "@/lib/user-display";
+import { SidebarXPWidget } from "@/features/gamification/components/sidebar-xp-widget";
 
 // =============================================================================
 // Student Sidebar — Matches Stitch dashboard sidebar design
@@ -74,6 +75,8 @@ export function StudentSidebar({ collapsed, className }: StudentSidebarProps) {
           )}
         </div>
       </div>
+
+      <SidebarXPWidget collapsed={collapsed} />
 
       {/* Navigation */}
       <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">

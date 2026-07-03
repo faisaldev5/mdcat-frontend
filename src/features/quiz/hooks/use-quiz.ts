@@ -59,7 +59,9 @@ export function useCompleteQuiz() {
       // Invalidate caches so dashboard and history reflect the new completion
       queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.quiz.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.analytics.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.gamification.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all });
     },
   });
 }
@@ -112,6 +114,9 @@ export function useToggleBookmark(attemptId: number) {
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.revision.all,
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.dashboard.stats(),
       });
     },
   });

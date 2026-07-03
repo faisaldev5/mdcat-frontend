@@ -1,13 +1,40 @@
-import apiClient from "./api-client";
 import { API_ENDPOINTS } from "@/constants/api-endpoints";
-import type { ApiResponse } from "@/types/api";
-import type { StreakSummary } from "@/features/gamification/types";
+import { apiGet } from "@/services/api-client";
+import type {
+  AchievementsResponse,
+  BadgesResponse,
+  LeaderboardResponse,
+  LeaderboardType,
+  StreakSummary,
+  XPSummary,
+} from "@/features/gamification/types";
 
 export const gamificationService = {
   getStreak: async (): Promise<StreakSummary> => {
-    const { data } = await apiClient.get<ApiResponse<StreakSummary>>(
-      API_ENDPOINTS.GAMIFICATION_STREAK
+    return apiGet<StreakSummary>(API_ENDPOINTS.GAMIFICATION_STREAK);
+  },
+
+  getXP: async (): Promise<XPSummary> => {
+    return apiGet<XPSummary>(API_ENDPOINTS.GAMIFICATION_XP);
+  },
+
+  getBadges: async (): Promise<BadgesResponse> => {
+    return apiGet<BadgesResponse>(API_ENDPOINTS.GAMIFICATION_BADGES);
+  },
+
+  getAchievements: async (): Promise<AchievementsResponse> => {
+    return apiGet<AchievementsResponse>(
+      API_ENDPOINTS.GAMIFICATION_ACHIEVEMENTS
     );
-    return data.data;
+  },
+
+  getLeaderboard: async (
+    type: LeaderboardType = "weekly",
+    limit = 20
+  ): Promise<LeaderboardResponse> => {
+    return apiGet<LeaderboardResponse>(
+      API_ENDPOINTS.GAMIFICATION_LEADERBOARD,
+      { params: { type, limit } }
+    );
   },
 };

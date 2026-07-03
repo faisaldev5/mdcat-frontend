@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ROUTES } from "@/constants/routes";
 import { useAuthStore } from "@/stores/auth.store";
 import { getUserInitials } from "@/lib/user-display";
+import { useUnreadCount } from "@/features/notifications/hooks/use-notifications";
 
 // =============================================================================
 // Student Top Bar
@@ -19,6 +21,7 @@ interface StudentTopBarProps {
 export function StudentTopBar({ className }: StudentTopBarProps) {
   const user = useAuthStore((state) => state.user);
   const initials = getUserInitials(user);
+  const { data: unreadCount = 0 } = useUnreadCount();
 
   return (
     <header
@@ -34,8 +37,12 @@ export function StudentTopBar({ className }: StudentTopBarProps) {
       <div className="flex items-center gap-3">
         {/* Notification bell */}
         <Button variant="ghost" size="icon" className="relative" render={<Link href={ROUTES.NOTIFICATIONS} />}>
-          <BellIcon className="h-5 w-5 text-muted-foreground" />
-          <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-destructive" />
+          <Bell className="h-5 w-5 text-muted-foreground" />
+          {unreadCount > 0 && (
+            <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-white">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
+          )}
           <span className="sr-only">Notifications</span>
         </Button>
 
@@ -50,13 +57,5 @@ export function StudentTopBar({ className }: StudentTopBarProps) {
         </Button>
       </div>
     </header>
-  );
-}
-
-function BellIcon({ className }: { className?: string }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-    </svg>
   );
 }

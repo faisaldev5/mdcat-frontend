@@ -3,6 +3,7 @@
 import { useAuthStore } from "@/stores/auth.store";
 import { getUserDisplayName } from "@/lib/user-display";
 import { StreakWidget } from "@/features/gamification/components/streak-widget";
+import { XPWidget } from "@/features/gamification/components/xp-widget";
 
 export function DashboardHero() {
   const user = useAuthStore((state) => state.user);
@@ -18,7 +19,8 @@ export function DashboardHero() {
           Ready to continue your MDCAT preparation? Let&apos;s make today count.
         </p>
       </div>
-      <div className="flex items-center">
+      <div className="flex flex-wrap items-center gap-2">
+        <XPWidget />
         <StreakWidget />
       </div>
     </div>

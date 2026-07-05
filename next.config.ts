@@ -6,6 +6,11 @@ const nextConfig: NextConfig = {
 
   // Image optimization — allow backend domain for user avatars
   images: {
+    localPatterns: [
+      {
+        pathname: "/images/**",
+      },
+    ],
     remotePatterns: [
       {
         protocol: "https",

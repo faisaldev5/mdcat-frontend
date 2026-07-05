@@ -33,6 +33,11 @@ export const metadata: Metadata = {
   },
   description:
     "The medical-grade Q-Bank built for Pakistan's top MDCAT aspirants. Master every subject with detailed analytics, exam-precision timed quizzes, and full-length simulations.",
+  icons: {
+    icon: [{ url: "/favicon.png?v=20260705", type: "image/png" }],
+    shortcut: [{ url: "/favicon.png?v=20260705", type: "image/png" }],
+    apple: [{ url: "/favicon.png?v=20260705", type: "image/png" }],
+  },
 };
 
 // =============================================================================

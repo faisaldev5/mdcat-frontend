@@ -7,6 +7,9 @@ export const ROUTES = {
   // Public routes
   HOME: "/",
   PRICING: "/pricing",
+  ABOUT: "/about",
+  CONTACT: "/contact",
+  ENROLLMENT: "/enrollment",
 
   // Auth routes
   LOGIN: "/login",
